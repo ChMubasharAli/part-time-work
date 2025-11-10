@@ -32,6 +32,13 @@ export async function POST(request: NextRequest) {
         maritalStatus: body.maritalStatus,
         gender: body.gender,
         estimatedStartDate: new Date(body.estimatedStartDate),
+        // Task-2 new fields (optional)
+        country: body.country || null,
+        address: body.address || null,
+        city: body.city || null,
+        estimatedEndDate: body.estimatedEndDate
+          ? new Date(body.estimatedEndDate)
+          : null,
       },
     });
 
