@@ -5,33 +5,16 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const requiredFields = [
-      "firstName",
-      "lastName",
-      "email",
-      "status",
-      "maritalStatus",
-      "gender",
-      "estimatedStartDate",
-    ];
-
-    const missingField = requiredFields.find((f) => !body[f]);
-    if (missingField) {
-      return NextResponse.json(
-        { error: `Missing required field: ${missingField}` },
-        { status: 400 }
-      );
-    }
-
+    
     const newRecord = await prisma.user.create({
       data: {
-        firstName: body.firstName,
-        lastName: body.lastName,
-        email: body.email,
-        status: body.status,
-        maritalStatus: body.maritalStatus,
-        gender: body.gender,
-        estimatedStartDate: new Date(body.estimatedStartDate),
+        firstName: body.firstName || "",
+        lastName: body.lastName || "",
+        email: body.email || "",
+        status: body.status || "",
+        maritalStatus: body.maritalStatus || "",
+        gender: body.gender || "",
+        estimatedStartDate: new Date(body.estimatedStartDate) || undefined,
       },
     });
 
