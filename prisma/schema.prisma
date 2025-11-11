@@ -10,13 +10,13 @@ datasource db {
 // User model 
 model User {
   id                 Int      @id @default(autoincrement())
-  firstName          String
-  lastName           String
-  email              String
-  status             String
-  maritalStatus      String
-  gender             String
-  estimatedStartDate DateTime
+  firstName          String?
+  lastName           String?
+  email              String?
+  status             String?
+  maritalStatus      String?
+  gender             String?
+  estimatedStartDate DateTime?
   // NEW FIELDS FOR TASK-2
   country            String?
   address            String?
