@@ -4,6 +4,27 @@ import { NextResponse, NextRequest } from "next/server";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    const requiredFields = [
+      "firstName",
+      "lastName",
+      "email",
+      "status",
+      "maritalStatus",
+      "gender",
+      "estimatedStartDate",
+      "country",
+      "city",
+      "address",
+      "estimatedEndDate",
+    ];
+
+    const missingField = requiredFields.find((f) => !body[f]);
+    if (missingField) {
+      return NextResponse.json(
+        { error: `Missing required field: ${missingField}` },
+        { status: 400 }
+      );
+    }
 
     const newRecord = await prisma.user.create({
       data: {
