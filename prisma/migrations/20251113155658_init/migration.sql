@@ -8,6 +8,10 @@ CREATE TABLE "User" (
     "maritalStatus" TEXT NOT NULL,
     "gender" TEXT NOT NULL,
     "estimatedStartDate" TIMESTAMP(3) NOT NULL,
+    "country" TEXT NOT NULL,
+    "address" TEXT NOT NULL,
+    "city" TEXT NOT NULL,
+    "estimatedEndDate" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

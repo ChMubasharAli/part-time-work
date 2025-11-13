@@ -1,0 +1,23 @@
+"use client";
+
+import { LuChevronFirst } from "react-icons/lu";
+
+interface FirstButtonProps {
+  onClick: () => void;
+  disabled: boolean;
+}
+
+export const FirstButton: React.FC<FirstButtonProps> = ({
+  disabled,
+  onClick,
+}) => {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="h-9 w-9 flex items-center justify-center border-2  rounded-full  border-gray-400 disabled:cursor-not-allowed"
+    >
+      <LuChevronFirst style={{ stroke: "#9ca3af", strokeWidth: 3 }} />
+    </button>
+  );
+};

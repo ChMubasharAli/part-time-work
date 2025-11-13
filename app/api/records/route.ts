@@ -39,9 +39,7 @@ export async function POST(request: NextRequest) {
         country: body.country || "",
         address: body.address || "",
         city: body.city || "",
-        estimatedEndDate: body.estimatedEndDate
-          ? new Date(body.estimatedEndDate)
-          : undefined,
+        estimatedEndDate: new Date(body.estimatedEndDate),
       },
     });
 
@@ -51,6 +49,23 @@ export async function POST(request: NextRequest) {
     );
   } catch (error: any) {
     console.error("Database error:", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to create user record" },
+      { status: 500 }
+    );
+  }
+}
+
+// get all the records from the database
+
+export async function GET() {
+  try {
+    const userData = await prisma.user.findMany();
+    return NextResponse.json(
+      { message: "User record created successfully!", userData },
+      { status: 201 }
+    );
+  } catch (error: any) {
     return NextResponse.json(
       { error: error.message || "Failed to create user record" },
       { status: 500 }
