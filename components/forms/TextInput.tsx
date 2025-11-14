@@ -8,13 +8,13 @@ interface TextInputProps {
   type?: string;
 }
 
-export const TextInput: React.FC<TextInputProps> = ({
+export const TextInput = ({
   label,
   value,
   onChange,
   placeholder,
   type,
-}) => {
+}: TextInputProps) => {
   return (
     <div className="flex flex-col space-y-2">
       <label className="text-sm font-medium text-gray-400">{label}</label>
