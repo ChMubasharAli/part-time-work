@@ -6,11 +6,11 @@ interface SubmitButtonProps {
   label?: string;
 }
 
-export const SubmitButton: React.FC<SubmitButtonProps> = ({
+export const SubmitButton = ({
   onClick,
   disabled = false,
   label = "SUBMIT",
-}) => {
+}: SubmitButtonProps) => {
   return (
     <button
       onClick={onClick}
