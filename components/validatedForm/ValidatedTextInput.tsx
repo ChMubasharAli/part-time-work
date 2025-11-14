@@ -12,14 +12,14 @@ interface ValidatedTextInputProps {
   type?: string;
 }
 
-export const ValidatedTextInput: React.FC<ValidatedTextInputProps> = ({
+export const ValidatedTextInput = ({
   label,
   name,
   register,
   error,
   placeholder,
   type,
-}) => {
+}: ValidatedTextInputProps) => {
   return (
     <div className="flex flex-col space-y-2">
       <label className="text-sm font-medium text-gray-400">{label}</label>

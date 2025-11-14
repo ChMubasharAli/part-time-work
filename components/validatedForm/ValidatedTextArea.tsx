@@ -13,14 +13,14 @@ interface ValidatedTextAreaProps {
   rows?: number;
 }
 
-export const ValidatedTextArea: React.FC<ValidatedTextAreaProps> = ({
+export const ValidatedTextArea = ({
   label,
   register,
   name,
   error,
   placeholder = "",
   rows = 4,
-}) => {
+}: ValidatedTextAreaProps) => {
   return (
     <div className="flex flex-col space-y-2">
       <label className="text-sm font-medium text-gray-700">{label}</label>
