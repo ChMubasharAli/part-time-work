@@ -7,12 +7,12 @@ interface DatePickerProps {
   readOnly?: boolean;
 }
 
-export const DatePicker: React.FC<DatePickerProps> = ({
+export const DatePicker = ({
   label,
   onChange,
   value,
   readOnly = false,
-}) => {
+}:DatePickerProps) => {
   return (
     <div className="flex flex-col space-y-2">
       <label className="text-sm font-medium text-gray-400">{label}</label>

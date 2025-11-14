@@ -11,14 +11,14 @@ interface TextAreaProps {
   readOnly?: boolean;
 }
 
-export const TextArea: React.FC<TextAreaProps> = ({
+export const TextArea = ({
   label,
   value,
   onChange,
   placeholder = "",
   rows = 4,
   readOnly = false,
-}) => {
+}: TextAreaProps) => {
   return (
     <div className="flex flex-col space-y-2">
       <label className="text-sm font-medium text-gray-700">{label}</label>
