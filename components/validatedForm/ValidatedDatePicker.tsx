@@ -8,6 +8,7 @@ interface ValidatedDatePickerProps {
   name: keyof Task3FormData;
   register: UseFormRegister<Task3FormData>;
   error?: FieldError;
+  readOnly?: boolean;
 }
 
 export const ValidatedDatePicker = ({
@@ -15,6 +16,7 @@ export const ValidatedDatePicker = ({
   name,
   register,
   error,
+  readOnly = false,
 }: ValidatedDatePickerProps) => {
   return (
     <div className="flex flex-col space-y-2">
@@ -22,9 +24,10 @@ export const ValidatedDatePicker = ({
       <input
         type="date"
         {...register(name)}
-        className={`px-3 text-gray-400 py-3 border  rounded-[8px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  placeholder:text-gray-400 ${
+        readOnly={readOnly}
+        className={`px-3 text-gray-400 py-3 border rounded-[8px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400 ${
           error ? "border-red-500" : "border-gray-400"
-        }`}
+        } ${readOnly ? "bg-gray-100 cursor-not-allowed" : ""}`}
       />
       {error && <p className="text-red-500 text-sm">{error.message}</p>}
     </div>

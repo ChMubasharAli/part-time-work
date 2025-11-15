@@ -1,6 +1,6 @@
 "use client";
 
-import { Value } from "@prisma/client/runtime/library";
+import { FieldError } from "react-hook-form";
 
 interface TextAreaProps {
   label: string;
@@ -9,6 +9,7 @@ interface TextAreaProps {
   placeholder: string;
   rows?: number;
   readOnly?: boolean;
+  error?: FieldError;
 }
 
 export const TextArea = ({
@@ -18,6 +19,7 @@ export const TextArea = ({
   placeholder = "",
   rows = 4,
   readOnly = false,
+  error,
 }: TextAreaProps) => {
   return (
     <div className="flex flex-col space-y-2">
@@ -28,8 +30,11 @@ export const TextArea = ({
         onChange={(e) => onChange?.(e.target.value)}
         placeholder={placeholder}
         rows={rows}
-        className="px-3 py-3 text-gray-400 border border-gray-400 rounded-[8px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400 resize-vertical read-only:cursor-not-allowed"
+        className={`px-3 text-gray-400 py-3 border  rounded-[8px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  placeholder:text-gray-400 ${
+          error ? "border-red-500" : "border-gray-400"
+        }`}
       />
+      {error && <p className="text-red-500 text-sm">{error.message}</p>}
     </div>
   );
 };

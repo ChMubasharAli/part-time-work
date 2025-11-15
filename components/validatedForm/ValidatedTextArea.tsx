@@ -1,7 +1,6 @@
 "use client";
 
 import { Task3FormData } from "@/lib/validations";
-import { Value } from "@prisma/client/runtime/library";
 import { FieldError, UseFormRegister } from "react-hook-form";
 
 interface ValidatedTextAreaProps {
@@ -11,15 +10,17 @@ interface ValidatedTextAreaProps {
   error?: FieldError;
   placeholder?: string;
   rows?: number;
+  readOnly?: boolean;
 }
 
 export const ValidatedTextArea = ({
   label,
-  register,
   name,
+  register,
   error,
   placeholder = "",
   rows = 4,
+  readOnly = false,
 }: ValidatedTextAreaProps) => {
   return (
     <div className="flex flex-col space-y-2">
@@ -28,9 +29,10 @@ export const ValidatedTextArea = ({
         {...register(name)}
         placeholder={placeholder}
         rows={rows}
-        className={`px-3 text-gray-400 py-3 border  rounded-[8px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent  placeholder:text-gray-400 ${
+        readOnly={readOnly}
+        className={`px-3 text-gray-400 py-3 border rounded-[8px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400 resize-vertical ${
           error ? "border-red-500" : "border-gray-400"
-        }`}
+        } ${readOnly ? "bg-gray-100 cursor-not-allowed" : ""}`}
       />
       {error && <p className="text-red-500 text-sm">{error.message}</p>}
     </div>
