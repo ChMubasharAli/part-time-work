@@ -16,7 +16,7 @@ const statusOptions = ["Not Started", "In Progress", "Completed"];
 const maritalStatusOptions = ["Single", "Married", "Divorced", "Widowed"];
 const genderOptions = ["Male", "Female", "Other"];
 
-export const Task1Form: React.FC = () => {
+export const Task1Form = () => {
   // Tab state - BASIC is selected by default
   const [activeTab, setActiveTab] = useState<"BASIC" | "END_DATE">("BASIC");
 

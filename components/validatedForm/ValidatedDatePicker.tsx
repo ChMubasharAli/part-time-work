@@ -10,12 +10,12 @@ interface ValidatedDatePickerProps {
   error?: FieldError;
 }
 
-export const ValidatedDatePicker: React.FC<ValidatedDatePickerProps> = ({
+export const ValidatedDatePicker = ({
   label,
   name,
   register,
   error,
-}) => {
+}: ValidatedDatePickerProps) => {
   return (
     <div className="flex flex-col space-y-2">
       <label className="text-sm font-medium text-gray-400">{label}</label>

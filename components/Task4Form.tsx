@@ -39,7 +39,7 @@ const genderOptions = ["Male", "Female", "Other"];
 const countryOptions = ["Pakistan", "USA", "UK", "Canada", "Australia"];
 const cityOptions = ["Karachi", "Washington", "London", "Toronto", "Sydney"];
 
-export const Task4Form: React.FC = () => {
+export const Task4Form = () => {
   // Tab state - BASIC is selected by default
   const [activeTab, setActiveTab] = useState<"BASIC" | "END DATE">("BASIC");
 

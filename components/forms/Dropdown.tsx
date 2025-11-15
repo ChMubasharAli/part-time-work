@@ -10,13 +10,13 @@ interface DropdownProps {
   readOnly?: boolean;
 }
 
-export const Dropdown: React.FC<DropdownProps> = ({
+export const Dropdown = ({
   label,
   value,
   onChange,
   options,
   readOnly = false,
-}) => {
+}: DropdownProps) => {
   return (
     <div className="flex flex-col space-y-2">
       <label className="text-sm font-medium text-gray-400">{label}</label>
