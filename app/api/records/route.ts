@@ -5,16 +5,18 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    
     const newRecord = await prisma.user.create({
       data: {
-        firstName: body.firstName || "",
-        lastName: body.lastName || "",
-        email: body.email || "",
-        status: body.status || "",
-        maritalStatus: body.maritalStatus || "",
-        gender: body.gender || "",
-        estimatedStartDate: new Date(body.estimatedStartDate) || undefined,
+        firstName: body.firstName || null,
+        lastName: body.lastName || null,
+        email: body.email || null,
+        status: body.status || null,
+        maritalStatus: body.maritalStatus || null,
+        gender: body.gender || null,
+        estimatedStartDate:
+          body.estimatedStartDate && !isNaN(Date.parse(body.estimatedStartDate))
+            ? new Date(body.estimatedStartDate)
+            : null,
       },
     });
 
