@@ -26,7 +26,7 @@ export const Task4Form: React.FC = () => {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const data = await crudOperations.readAll();
+      const data = await crudOperations.readAll("/api/records");
       setUsers(data.userData);
     } catch (error) {
       console.error("Error loading users:", error);

@@ -14,8 +14,8 @@ export interface User {
 }
 
 export const crudOperations = {
-  readAll: async (): Promise<{ userData: User[] }> => {
-    const response = await fetch("/api/records");
+  readAll: async (apiUrl: string): Promise<{ userData: User[] }> => {
+    const response = await fetch(`${apiUrl}`);
 
     if (!response.ok) {
       throw new Error("Error loading users data");
