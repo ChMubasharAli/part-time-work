@@ -17,7 +17,6 @@ model User {
   maritalStatus      String
   gender             String
   estimatedStartDate DateTime
-  // NEW FIELDS FOR TASK-2
   country            String
   address            String
   city               String

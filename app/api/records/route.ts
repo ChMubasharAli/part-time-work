@@ -1,9 +1,10 @@
 import prisma from "@/lib/prisma";
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+
     const requiredFields = [
       "firstName",
       "lastName",
@@ -18,30 +19,34 @@ export async function POST(request: NextRequest) {
       "estimatedEndDate",
     ];
 
-    const missingField = requiredFields.find((f) => !body[f]);
-    if (missingField) {
+    // Find all empty fields
+    const emptyFields = requiredFields.filter(
+      (field) => !body[field] || body[field].trim() === ""
+    );
+
+    if (emptyFields.length > 0) {
       return NextResponse.json(
-        { error: `Missing required field: ${missingField}` },
+        {
+          error: "Please fill in all required fields",
+          emptyFields: emptyFields,
+          message: `Missing fields: ${emptyFields.join(", ")}`,
+        },
         { status: 400 }
       );
     }
-
     const newRecord = await prisma.user.create({
       data: {
-        firstName: body.firstName || "",
-        lastName: body.lastName || "",
-        email: body.email || "",
-        status: body.status || "",
-        maritalStatus: body.maritalStatus || "",
+        firstName: body.firstName,
+        lastName: body.lastName,
+        email: body.email,
+        status: body.status,
+        maritalStatus: body.maritalStatus,
         gender: body.gender,
-        estimatedStartDate: new Date(body.estimatedStartDate) || undefined,
-        // Task-2 new fields (optional)
-        country: body.country || "",
-        address: body.address || "",
-        city: body.city || "",
-        estimatedEndDate: body.estimatedEndDate
-          ? new Date(body.estimatedEndDate)
-          : undefined,
+        estimatedStartDate: new Date(body.estimatedStartDate),
+        country: body.country,
+        city: body.city,
+        address: body.address,
+        estimatedEndDate: new Date(body.estimatedEndDate),
       },
     });
 

@@ -1,7 +1,7 @@
 "use client ";
 
 import { UseFormRegister, FieldError } from "react-hook-form";
-import { Task3FormData } from "@/lib/validations";
+import { Task3FormData } from "@/lib/user.schema";
 
 interface ValidatedTextInputProps {
   label: string;

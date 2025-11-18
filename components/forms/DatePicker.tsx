@@ -6,11 +6,7 @@ interface DatePickerProps {
   onChange: (value: string) => void;
 }
 
-export const DatePicker: React.FC<DatePickerProps> = ({
-  label,
-  onChange,
-  value,
-}) => {
+export const DatePicker = ({ label, onChange, value }: DatePickerProps) => {
   return (
     <div className="flex flex-col space-y-2">
       <label className="text-sm font-medium text-gray-400">{label}</label>

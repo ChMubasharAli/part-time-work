@@ -6,11 +6,11 @@ interface DiscardButtonProps {
   label?: string;
 }
 
-export const DiscardButton: React.FC<DiscardButtonProps> = ({
+export const DiscardButton = ({
   onClick,
   disabled = false,
   label = "DISCARD",
-}) => {
+}: DiscardButtonProps) => {
   return (
     <button
       onClick={onClick}

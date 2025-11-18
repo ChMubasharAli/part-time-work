@@ -7,12 +7,12 @@ interface DropdownProps {
   options: string[];
 }
 
-export const Dropdown: React.FC<DropdownProps> = ({
+export const Dropdown = ({
   label,
   value,
   onChange,
   options,
-}) => {
+}: DropdownProps) => {
   return (
     <div className="flex flex-col space-y-2">
       <label className="text-sm font-medium text-gray-400">{label}</label>

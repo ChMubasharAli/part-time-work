@@ -1,6 +1,6 @@
 "use client";
 
-import { Task3FormData } from "@/lib/validations";
+import { Task3FormData } from "@/lib/user.schema";
 import { Value } from "@prisma/client/runtime/library";
 import { FieldError, UseFormRegister } from "react-hook-form";
 

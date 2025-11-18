@@ -1,6 +1,6 @@
 "use client ";
 
-import { Task3FormData } from "@/lib/validations";
+import { Task3FormData } from "@/lib/user.schema";
 import { FieldError, UseFormRegister } from "react-hook-form";
 
 interface ValidatedDropdownProps {
