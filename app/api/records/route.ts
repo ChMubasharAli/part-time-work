@@ -7,20 +7,24 @@ export async function POST(request: NextRequest) {
 
     const newRecord = await prisma.user.create({
       data: {
-        firstName: body.firstName || "",
-        lastName: body.lastName || "",
-        email: body.email || "",
-        status: body.status || "",
-        maritalStatus: body.maritalStatus || "",
-        gender: body.gender,
-        estimatedStartDate: new Date(body.estimatedStartDate) || undefined,
-        // Task-2 new fields (optional)
-        country: body.country || "",
-        address: body.address || "",
-        city: body.city || "",
-        estimatedEndDate: body.estimatedEndDate
-          ? new Date(body.estimatedEndDate)
-          : undefined,
+        firstName: body.firstName || null,
+        lastName: body.lastName || null,
+        email: body.email || null,
+        status: body.status || null,
+        maritalStatus: body.maritalStatus || null,
+        gender: body.gender || null,
+        estimatedStartDate:
+          body.estimatedStartDate && !isNaN(Date.parse(body.estimatedStartDate))
+            ? new Date(body.estimatedStartDate)
+            : null,
+
+        country: body.country || null,
+        city: body.city || null,
+        address: body.address || null,
+        estimatedEndDate:
+          body.estimatedEndDate && !isNaN(Date.parse(body.estimatedEndDate))
+            ? new Date(body.estimatedEndDate)
+            : null,
       },
     });
 
