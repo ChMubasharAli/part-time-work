@@ -32,7 +32,10 @@ export async function PUT(
       },
     });
 
-    return NextResponse.json(updatedUser);
+    return NextResponse.json({
+      message: "Record updated successfully",
+      updatedUser,
+    });
   } catch (error) {
     console.error("Error updating user:", error);
     return NextResponse.json(
