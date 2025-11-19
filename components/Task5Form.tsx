@@ -46,9 +46,9 @@ export const Task5Form = ({ mode }: Task5FromProps) => {
     clearErrors,
   } = formMethods;
 
-  // Single useEffect for initial data loading
+  // Single useEffect for all data operations
   useEffect(() => {
-    const initializeForm = async () => {
+    const handleFormData = async () => {
       if (isCreateMode) {
         // For create mode, just reset to empty form
         reset(getDefaultValues());
@@ -56,15 +56,19 @@ export const Task5Form = ({ mode }: Task5FromProps) => {
         return;
       }
 
-      // For edit/readonly modes, load users
+      // For edit/readonly modes
       try {
         setLoading(true);
-        const userData = await crudOperations.read("/api/records");
-        setUsers(userData);
 
-        if (userData.length > 0) {
-          // Populate form with first user's data
-          populateFormWithUserData(userData[0]);
+        // Load users only if we don't have them or we're not just navigating
+        if (users.length === 0) {
+          const userData = await crudOperations.read("/api/records");
+          setUsers(userData);
+        }
+
+        // If we have users and a current user, populate the form
+        if (users.length > 0 && currentUser) {
+          populateFormWithUserData(currentUser);
         }
       } catch (error) {
         toast.error("Error loading records");
@@ -73,15 +77,8 @@ export const Task5Form = ({ mode }: Task5FromProps) => {
       }
     };
 
-    initializeForm();
-  }, [mode]); // Only depend on mode
-
-  // Update form when navigating between records
-  useEffect(() => {
-    if (currentUser && !isCreateMode) {
-      populateFormWithUserData(currentUser);
-    }
-  }, [currentIndex, users]); // Update when current index or users change
+    handleFormData();
+  }, [mode, currentIndex, users.length]); // Dependencies for all scenarios
 
   const populateFormWithUserData = (user: User) => {
     const values = {
@@ -123,8 +120,6 @@ export const Task5Form = ({ mode }: Task5FromProps) => {
         );
         if (response.message) {
           toast.success(response.message || "Record updated successfully");
-          // Form will show the updated data immediately since we're editing local state
-          // On hard refresh, it will reload from server
         } else {
           toast.error(response.error || "Error updating record");
         }
