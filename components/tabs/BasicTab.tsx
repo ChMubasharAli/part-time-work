@@ -1,6 +1,10 @@
+// components/tabs/BasicTab.tsx (with hook)
+"use client";
+
 import { ValidatedTextInput } from "../validatedForm/ValidatedTextInput";
 import { ValidatedDropdown } from "../validatedForm/ValidatedDropdown";
 import { ValidatedDatePicker } from "../validatedForm/ValidatedDatePicker";
+import { useContainerWidth } from "@/hooks/useContainerWIdth";
 
 interface BasiTabProps {
   register: any;
@@ -8,15 +12,17 @@ interface BasiTabProps {
   readOnly: boolean;
 }
 
-// options
 const statusOptions = ["Not Started", "In Progress", "Completed"];
 const maritalStatusOptions = ["Single", "Married", "Divorced", "Widowed"];
 const genderOptions = ["Male", "Female", "Other"];
 
 export const BasicTab = ({ register, errors, readOnly }: BasiTabProps) => {
+  const { containerRef, columns } = useContainerWidth(768);
+  const gridClass = columns === 3 ? "grid-cols-3" : "grid-cols-2";
+
   return (
-    <section className="min-h-80">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4">
+    <section className="min-h-80" ref={containerRef}>
+      <div className={`grid ${gridClass} gap-4 px-4`}>
         <ValidatedTextInput
           label="First Name"
           name="firstName"
