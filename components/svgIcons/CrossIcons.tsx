@@ -4,8 +4,8 @@ export const CrossIcon = () => (
     fill="none"
     viewBox="0 0 24 24"
     strokeWidth="3.2"
-    stroke="#9ca3af "
-    className="size-4"
+    stroke="currentColor"
+    className="size-5"
   >
     <path
       strokeLinecap="round"

@@ -2,10 +2,9 @@
 "use client";
 
 import { useState } from "react";
-
+import { FormDialog } from "@/components/FormDialog";
 import { Task5Form } from "@/components/Task5Form";
 import { FormMode } from "@/lib/constants";
-import { FormDialog } from "@/components/FormDialog";
 
 export default function MenuPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -24,7 +23,8 @@ export default function MenuPage() {
     <>
       {/* Main Menu Content - Dimmed when dialog is open */}
       <div
-        className={` flex items-center justify-center bg-gray-100 py-8
+        className={`
+        h-screen w-full flex items-center justify-end bg-gray-100  
         transition-opacity duration-300
         ${isDialogOpen ? "opacity-40" : "opacity-100"}
       `}

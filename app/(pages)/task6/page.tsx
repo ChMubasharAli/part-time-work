@@ -11,7 +11,7 @@ export default function Task5Page() {
   const currentMode = validModes.includes(mode) ? mode : "readonly";
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-100 ">
+    <main className="">
       <Task5Form mode={currentMode} />
     </main>
   );

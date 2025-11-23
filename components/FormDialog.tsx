@@ -1,9 +1,13 @@
-// components/FormDialog.tsx
-"use client";
-
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+} from "@/components/ui/drawer";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { CrossIcon } from "./svgIcons/CrossIcons";
-import { ExpandIcon } from "./svgIcons/ExpandIcon";
 
 interface FormDialogProps {
   isOpen: boolean;
@@ -12,35 +16,20 @@ interface FormDialogProps {
 }
 
 export const FormDialog = ({ isOpen, onClose, children }: FormDialogProps) => {
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const [dialogWidth, setDialogWidth] = useState(600);
 
-  // Size constraints
   const MIN_WIDTH = 500;
   const MAX_WIDTH = 1200;
 
-  // Initialize dialog when isOpen changes
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-
-    if (isOpen) {
-      dialog.showModal();
-      setDialogWidth(600);
-    } else {
-      dialog.close();
-    }
-  }, [isOpen]);
-
-  // Smooth resize handler
   const handleResizeStart = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
 
     const startX = e.clientX;
     const startWidth = dialogWidth;
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
-      const deltaX = moveEvent.clientX - startX;
+      const deltaX = startX - moveEvent.clientX;
       const newWidth = Math.max(
         MIN_WIDTH,
         Math.min(MAX_WIDTH, startWidth + deltaX)
@@ -51,36 +40,54 @@ export const FormDialog = ({ isOpen, onClose, children }: FormDialogProps) => {
     const handleMouseUp = () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
+      document.body.style.cursor = "";
     };
 
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
+    document.body.style.cursor = "col-resize";
   };
 
   return (
-    <dialog
-      ref={dialogRef}
-      className="fixed left-0 top-5 h-screen rounded-tr-[8px] rounded-br-[8px] m-0 p-0 bg-white shadow-2xl border-r border-gray-300 backdrop:bg-black backdrop:bg-opacity-50 overflow-hidden"
-      style={{ width: `${dialogWidth}px` }}
-    >
-      {/* Close Button */}
-      <button
-        onClick={onClose}
-        className="absolute  top-2 right-2  w-8 h-8 rounded-[8px] bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-800 transition-colors text-lg font-bold"
-        aria-label="Close dialog"
-      >
-        <CrossIcon />
-      </button>
-      {/* Content - Full height */}
-      <div className="h-full overflow-y-auto p-6">{children}</div>
-      {/* Bottom-right resize handle */}
-      <div
-        className="absolute bottom-1 right-1 "
-        onMouseDown={handleResizeStart}
-        title="Drag to resize width"
-      >
-        <ExpandIcon />
-      </div>
-    </dialog>
+    <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DrawerContent className="h-screen top-0 right-0 left-auto mt-0 rounded-none max-w-full">
+        {/* REQUIRED FOR ACCESSIBILITY */}
+        <DrawerHeader className="hidden">
+          <VisuallyHidden>
+            <DrawerTitle>Form Dialog</DrawerTitle>
+            <DrawerDescription>Resizable form drawer</DrawerDescription>
+          </VisuallyHidden>
+        </DrawerHeader>
+
+        <div
+          className="h-full bg-white relative ml-auto border-l-2 border-orange-500 shadow-2xl"
+          style={{ width: `${dialogWidth}px` }}
+        >
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            className="absolute -left-8 -top-7 z-50 w-8 h-8 bg-orange-500 hover:bg-orange-600 flex items-center justify-center text-white transition-colors text-lg font-bold shadow-md border-2 border-orange-500"
+            aria-label="Close dialog"
+          >
+            <CrossIcon />
+          </button>
+
+          {/* Resize Handle */}
+          <div
+            className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-12 cursor-col-resize bg-orange-500 rounded opacity-80 hover:opacity-100 flex items-center justify-center"
+            onMouseDown={handleResizeStart}
+          >
+            <div className="flex flex-col space-y-1">
+              <div className="w-1 h-1 bg-white rounded-full" />
+              <div className="w-1 h-1 bg-white rounded-full" />
+              <div className="w-1 h-1 bg-white rounded-full" />
+            </div>
+          </div>
+
+          {/* Drawer Content */}
+          <div className="h-full overflow-y-auto p-6">{children}</div>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 };
