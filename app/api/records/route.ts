@@ -1,3 +1,4 @@
+// /api/records/route.ts - UPDATED GET METHOD
 import prisma from "@/lib/prisma";
 import { NextResponse, NextRequest } from "next/server";
 
@@ -35,7 +36,6 @@ export async function POST(request: NextRequest) {
         maritalStatus: body.maritalStatus || "",
         gender: body.gender,
         estimatedStartDate: new Date(body.estimatedStartDate) || undefined,
-        // Task-2 new fields (optional)
         country: body.country || "",
         address: body.address || "",
         city: body.city || "",
@@ -56,18 +56,33 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// get all the records from the database
-
-export async function GET() {
+// UPDATED GET METHOD WITH PAGINATION
+export async function GET(request: NextRequest) {
   try {
-    const userData = await prisma.user.findMany();
-    return NextResponse.json(
-      { message: "User record created successfully!", userData },
-      { status: 201 }
-    );
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const skip = (page - 1) * limit;
+
+    const [userData, totalCount] = await Promise.all([
+      prisma.user.findMany({
+        skip,
+        take: limit,
+        orderBy: { id: "asc" },
+      }),
+      prisma.user.count(),
+    ]);
+
+    return NextResponse.json({
+      records: userData,
+      totalCount,
+      hasMore: skip + userData.length < totalCount,
+      currentPage: page,
+      pageSize: limit,
+    });
   } catch (error: any) {
     return NextResponse.json(
-      { error: error.message || "Failed to create user record" },
+      { error: error.message || "Failed to fetch records" },
       { status: 500 }
     );
   }

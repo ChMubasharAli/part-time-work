@@ -1,9 +1,32 @@
-// app/menu/page.tsx
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { crudOperations } from "@/lib/crud";
 
 export default function MenuPage() {
+  const queryClient = useQueryClient();
+
+  // Prefetch records when menu page loads
+  useEffect(() => {
+    const prefetchRecords = async () => {
+      try {
+        await queryClient.prefetchQuery({
+          queryKey: ["records", 1],
+          queryFn: () => crudOperations.read("/api/records", 1, 10),
+          staleTime: 5 * 60 * 1000,
+        });
+      } catch (error) {
+        console.log(
+          "Prefetch failed, but that's okay - will fetch when needed"
+        );
+      }
+    };
+
+    prefetchRecords();
+  }, [queryClient]);
+
   return (
     <div className=" max-w-2xl w-full mx-auto p-6 bg-white rounded-2xl shadow-md space-y-4">
       <div className="text-center">

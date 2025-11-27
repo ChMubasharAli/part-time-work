@@ -1,6 +1,7 @@
-"use client";
+// /components/Task5Form.tsx - FIXED VERSION
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
@@ -14,23 +15,40 @@ import { crudOperations, User } from "@/lib/crud";
 import { LoadingState } from "./states/LoadingState";
 import { EmptyState } from "./states/EmptyState";
 import { TabsNavigation } from "./navigation/TabNavigation";
+import { useRecords } from "@/hooks/useRecords";
+import { useManualFetch } from "@/hooks/useManualFetch";
 
 interface Task5FromProps {
   mode: FormMode;
 }
 
 export const Task5Form = ({ mode }: Task5FromProps) => {
-  const [users, setUsers] = useState<User[]>([]);
+  // State declarations
   const [currentIndex, setCurrentIndex] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<"BASIC" | "END DATE">("BASIC");
-  const [loading, setLoading] = useState(mode !== FORM_MODES.CREATE);
+  const [allRecords, setAllRecords] = useState<User[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const currentUser = users[currentIndex];
+  // TanStack Query hooks
+  const { 
+    records: currentPageRecords, 
+    totalCount, 
+    hasMore, 
+    isLoading, 
+    isFetching,
+    prefetchNextPage 
+  } = useRecords(currentPage);
+
+  const { fetchPage } = useManualFetch();
+
+  // Derived values
+  const currentUser = allRecords[currentIndex];
   const isReadOnly = mode === FORM_MODES.READONLY;
   const isCreateMode = mode === FORM_MODES.CREATE;
   const isEditMode = mode === FORM_MODES.EDIT;
 
+  // Form setup
   const formMethods = useForm<Task5FormData>({
     resolver: isReadOnly ? undefined : zodResolver(task5FormSchema),
     defaultValues: getDefaultValues(),
@@ -42,45 +60,11 @@ export const Task5Form = ({ mode }: Task5FromProps) => {
     formState: { errors },
     reset,
     setFocus,
-    setValue,
     clearErrors,
   } = formMethods;
 
-  // Single useEffect for all data operations
-  useEffect(() => {
-    const handleFormData = async () => {
-      if (isCreateMode) {
-        // For create mode, just reset to empty form
-        reset(getDefaultValues());
-        setLoading(false);
-        return;
-      }
-
-      // For edit/readonly modes
-      try {
-        setLoading(true);
-
-        // Load users only if we don't have them or we're not just navigating
-        if (users.length === 0) {
-          const userData = await crudOperations.read("/api/records");
-          setUsers(userData);
-        }
-
-        // If we have users and a current user, populate the form
-        if (users.length > 0 && currentUser) {
-          populateFormWithUserData(currentUser);
-        }
-      } catch (error) {
-        toast.error("Error loading records");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    handleFormData();
-  }, [mode, currentIndex, users.length]); // Dependencies for all scenarios
-
-  const populateFormWithUserData = (user: User) => {
+  // Stable helper functions with useCallback
+  const populateFormWithUserData = useCallback((user: User) => {
     const values = {
       firstName: user.firstName || "",
       lastName: user.lastName || "",
@@ -94,35 +78,66 @@ export const Task5Form = ({ mode }: Task5FromProps) => {
       city: user.city || "",
       estimatedEndDate: formatDate(user.estimatedEndDate) || "",
     };
-
     reset(values);
-  };
+  }, [reset]);
 
-  // Handle form submission
+  const formatDate = (dateString: string) => 
+    dateString ? dateString.split("T")[0] : "";
+
+  // EFFECT 1: Handle initial data setup and record updates
+  useEffect(() => {
+    if (isCreateMode) {
+      reset(getDefaultValues());
+      return;
+    }
+
+    // Only update records when we have new currentPageRecords
+    if (currentPageRecords.length > 0) {
+      setAllRecords(prev => {
+        const existingIds = new Set(prev.map(record => record.id));
+        const newRecords = currentPageRecords.filter(record => 
+          !existingIds.has(record.id)
+        );
+        
+        // Only update if we actually have new records
+        return newRecords.length > 0 ? [...prev, ...newRecords] : prev;
+      });
+    }
+  }, [isCreateMode, currentPageRecords, reset]);
+
+  // EFFECT 2: Handle form population when current user changes
+  useEffect(() => {
+    if (isCreateMode || !currentUser) return;
+    
+    populateFormWithUserData(currentUser);
+  }, [isCreateMode, currentUser, populateFormWithUserData]);
+
+  // EFFECT 3: Handle smart prefetching
+  useEffect(() => {
+    if (isCreateMode || allRecords.length === 0) return;
+    
+    const sixtyPercentThreshold = Math.floor(allRecords.length * 0.6);
+    if (currentIndex >= sixtyPercentThreshold) {
+      prefetchNextPage(currentIndex, allRecords);
+    }
+  }, [isCreateMode, currentIndex, allRecords, prefetchNextPage]);
+
+  // Form submission
   const onSubmit = async (data: Task5FormData) => {
     setSubmitting(true);
-
     try {
       if (isCreateMode) {
         const response = await crudOperations.create(data, "/api/records");
-        if (response.message) {
-          toast.success(response.message || "Record created successfully");
-          reset(getDefaultValues());
-          setActiveTab("BASIC");
-        } else {
-          toast.error(response.error || "Error creating record");
-        }
-      } else if (isEditMode && typeof currentUser?.id === "number") {
-        const response = await crudOperations.update(
-          currentUser.id,
-          data,
-          "/api/records"
-        );
-        if (response.message) {
-          toast.success(response.message || "Record updated successfully");
-        } else {
-          toast.error(response.error || "Error updating record");
-        }
+        response.message 
+          ? toast.success(response.message) 
+          : toast.error(response.error || "Error creating record");
+        reset(getDefaultValues());
+        setActiveTab("BASIC");
+      } else if (isEditMode && currentUser?.id) {
+        const response = await crudOperations.update(currentUser.id, data, "/api/records");
+        response.message 
+          ? toast.success(response.message) 
+          : toast.error(response.error || "Error updating record");
       }
     } catch (error) {
       toast.error("Error saving data");
@@ -131,7 +146,7 @@ export const Task5Form = ({ mode }: Task5FromProps) => {
     }
   };
 
-  // Handle save with validation
+  // Save with validation
   const handleSave = handleSubmit(onSubmit, (errors) => {
     const firstError = Object.keys(errors)[0] as keyof Task5FormData;
     if (firstError) {
@@ -142,21 +157,16 @@ export const Task5Form = ({ mode }: Task5FromProps) => {
 
   const handleTabSwitch = (field: keyof Task5FormData) => {
     const basicFields = [
-      "firstName",
-      "lastName",
-      "email",
-      "status",
-      "maritalStatus",
-      "gender",
-      "estimatedStartDate",
+      "firstName", "lastName", "email", "status", 
+      "maritalStatus", "gender", "estimatedStartDate",
     ];
     const endDateFields = ["country", "address", "city", "estimatedEndDate"];
 
-    if (basicFields.includes(field)) setActiveTab("BASIC");
-    else if (endDateFields.includes(field)) setActiveTab("END DATE");
+    basicFields.includes(field) ? setActiveTab("BASIC") : 
+    endDateFields.includes(field) && setActiveTab("END DATE");
   };
 
-  // Handle cancel - reset to current user data
+  // Cancel handler
   const handleCancel = () => {
     if (isCreateMode) {
       reset(getDefaultValues());
@@ -167,21 +177,38 @@ export const Task5Form = ({ mode }: Task5FromProps) => {
     setActiveTab("BASIC");
   };
 
-  // Navigation functions
+  // Navigation handlers
   const navigationHandlers = {
     goToFirst: () => setCurrentIndex(0),
     goToPrevious: () => setCurrentIndex(Math.max(0, currentIndex - 1)),
-    goToNext: () =>
-      setCurrentIndex(Math.min(users.length - 1, currentIndex + 1)),
-    goToLast: () => setCurrentIndex(users.length - 1),
+    goToNext: async () => {
+      const nextIndex = currentIndex + 1;
+      
+      if (nextIndex >= allRecords.length && hasMore) {
+        try {
+          const nextPage = currentPage + 1;
+          const newData = await fetchPage(nextPage);
+          if (newData.records.length > 0) {
+            setCurrentPage(nextPage);
+            setCurrentIndex(nextIndex);
+          }
+        } catch (error) {
+          toast.error("Error loading more records");
+        }
+      } else if (nextIndex < allRecords.length) {
+        setCurrentIndex(nextIndex);
+      }
+    },
+    goToLast: () => {
+      hasMore 
+        ? toast.info("Loading all records...") 
+        : setCurrentIndex(allRecords.length - 1);
+    },
   };
 
-  const formatDate = (dateString: string) =>
-    dateString ? dateString.split("T")[0] : "";
-
   // Render states
-  if (loading) return <LoadingState />;
-  if (mode !== FORM_MODES.CREATE && users.length === 0) return <EmptyState />;
+  if (isLoading && allRecords.length === 0) return <LoadingState />;
+  if (mode !== FORM_MODES.CREATE && allRecords.length === 0) return <EmptyState />;
 
   return (
     <div className="max-w-4xl w-full mx-auto p-6">
@@ -190,31 +217,23 @@ export const Task5Form = ({ mode }: Task5FromProps) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-6">
           {activeTab === "BASIC" && (
-            <BasicTab
-              register={register}
-              errors={errors}
-              readOnly={isReadOnly}
-            />
+            <BasicTab register={register} errors={errors} readOnly={isReadOnly} />
           )}
 
           {activeTab === "END DATE" && (
-            <EndDateTab
-              register={register}
-              errors={errors}
-              readOnly={isReadOnly}
-            />
+            <EndDateTab register={register} errors={errors} readOnly={isReadOnly} />
           )}
 
           <div className="flex gap-10 pt-20 justify-center items-center">
             {mode !== FORM_MODES.CREATE && (
               <RecordNavigation
                 currentIndex={currentIndex}
-                totalRecords={users.length}
+                totalRecords={allRecords.length}
                 onFirst={navigationHandlers.goToFirst}
                 onPrevious={navigationHandlers.goToPrevious}
                 onNext={navigationHandlers.goToNext}
                 onLast={navigationHandlers.goToLast}
-                disabled={submitting}
+                disabled={submitting || isFetching}
               />
             )}
 
@@ -222,7 +241,7 @@ export const Task5Form = ({ mode }: Task5FromProps) => {
               onSubmit={handleSave}
               onCancel={handleCancel}
               submitting={submitting}
-              navigating={false}
+              navigating={isFetching}
               readOnly={isReadOnly}
             />
           </div>
@@ -232,6 +251,7 @@ export const Task5Form = ({ mode }: Task5FromProps) => {
   );
 };
 
+// Default values outside component
 function getDefaultValues(): Task5FormData {
   return {
     firstName: "",

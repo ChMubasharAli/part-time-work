@@ -1,4 +1,6 @@
+
 import { Task5FormData } from "./validations";
+
 export interface User {
   id?: number;
   firstName: string;
@@ -14,6 +16,14 @@ export interface User {
   estimatedEndDate: string;
 }
 
+export interface RecordsResponse {
+  records: User[];
+  totalCount: number;
+  hasMore: boolean;
+  currentPage: number;
+  pageSize: number;
+}
+
 export const crudOperations = {
   // Create
   create: async (data: Task5FormData, apiUrl: string) => {
@@ -25,12 +35,15 @@ export const crudOperations = {
     return await response.json();
   },
 
-  // Read
-  read: async (apiUrl: string) => {
-    const response = await fetch(`${apiUrl}`);
+  // Read with pagination
+  read: async (
+    apiUrl: string,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<RecordsResponse> => {
+    const response = await fetch(`${apiUrl}?page=${page}&limit=${limit}`);
     if (!response.ok) throw new Error("Failed to fetch records");
-    const userData = await response.json();
-    return userData.userData || userData;
+    return await response.json();
   },
 
   // Update
