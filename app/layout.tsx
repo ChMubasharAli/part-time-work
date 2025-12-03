@@ -1,3 +1,4 @@
+import QueryProvider from "@/components/QueryProvider";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body suppressHydrationWarning>
-        {children}
+        <QueryProvider>{children}</QueryProvider>
         <ToastContainer />
       </body>
     </html>

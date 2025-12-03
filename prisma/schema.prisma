@@ -7,8 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// User model 
-model User {
+model Task8UserBasic {
   id                 Int      @id @default(autoincrement())
   firstName          String
   lastName           String
@@ -17,11 +16,37 @@ model User {
   maritalStatus      String
   gender             String
   estimatedStartDate DateTime
-  // NEW FIELDS FOR TASK-2
-  country            String
-  address            String
-  city               String
-  estimatedEndDate   DateTime
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+}
+
+// Table 2: EndDate Tab Data
+model Task8UserEndDate {
+  id               Int      @id @default(autoincrement())
+  userId           Int      // Links to Task8UserBasic.id
+  country          String
+  address          String
+  city             String
+  estimatedEndDate DateTime
+  createdAt        DateTime @default(now())
+}
+
+// Table 3: Additional Tab Data
+model Task8UserAdditional {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  
+  // Radio button fields
+  subscriptionType String   @default("basic")
+  communicationPref String  @default("email")
+  
+  // Range field
+  salaryRange      Int      @default(50000)
+  
+  // File fields (store URLs)
+  profilePicture   String?   // URL to uploaded file
+  supportingDocs   String[]  // Array of URLs
+  namedFiles       String?   // JSON string with document type and custom names
+  
+  createdAt        DateTime @default(now())
 }

@@ -1,12 +1,12 @@
 "use client";
 
+import { Task5FormData } from "@/lib/validations";
 import { UseFormRegister, FieldError } from "react-hook-form";
-import { Task3FormData } from "@/lib/validations";
 
 interface ValidatedTextInputProps {
   label: string;
-  name: keyof Task3FormData;
-  register: UseFormRegister<Task3FormData>;
+  name: keyof Task5FormData;
+  register: UseFormRegister<Task5FormData>;
   error?: FieldError;
   placeholder?: string;
   type?: string;

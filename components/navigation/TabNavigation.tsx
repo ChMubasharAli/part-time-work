@@ -2,8 +2,8 @@ import { EndDateIcon } from "../svgIcons/EndDateIcon";
 import { UserIcon } from "../svgIcons/UserIcons";
 
 interface TabsNavigationProps {
-  activeTab: "BASIC" | "END DATE";
-  onTabChange: (tab: "BASIC" | "END DATE") => void;
+  activeTab: "BASIC" | "END_DATE" | "ADDITIONAL";
+  onTabChange: (tab: "BASIC" | "END_DATE" | "ADDITIONAL") => void;
 }
 
 export const TabsNavigation = ({
@@ -18,10 +18,16 @@ export const TabsNavigation = ({
       label="BASIC"
     />
     <TabButton
-      active={activeTab === "END DATE"}
-      onClick={() => onTabChange("END DATE")}
+      active={activeTab === "END_DATE"}
+      onClick={() => onTabChange("END_DATE")}
       icon={<EndDateIcon />}
       label="END DATE"
+    />
+    <TabButton
+      active={activeTab === "ADDITIONAL"}
+      onClick={() => onTabChange("ADDITIONAL")}
+      icon={<EndDateIcon />}
+      label="Additional Details"
     />
   </div>
 );

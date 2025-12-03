@@ -1,3 +1,5 @@
+"use client";
+
 import { ValidatedDatePicker } from "../validatedForm/ValidatedDatePicker";
 import { ValidatedDropdown } from "../validatedForm/ValidatedDropdown";
 import { ValidatedTextArea } from "../validatedForm/ValidatedTextArea";

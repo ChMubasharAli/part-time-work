@@ -1,19 +1,21 @@
-import { ValidatedTextInput } from "../validatedForm/ValidatedTextInput";
-import { ValidatedDropdown } from "../validatedForm/ValidatedDropdown";
-import { ValidatedDatePicker } from "../validatedForm/ValidatedDatePicker";
+"use client";
 
-interface BasiTabProps {
+import { ValidatedDatePicker } from "../validatedForm/ValidatedDatePicker";
+import { ValidatedDropdown } from "../validatedForm/ValidatedDropdown";
+import { ValidatedTextInput } from "../validatedForm/ValidatedTextInput";
+
+interface BasicTabProps {
   register: any;
   errors: any;
   readOnly: boolean;
 }
 
-// options
+// Options (same as Task-7)
 const statusOptions = ["Not Started", "In Progress", "Completed"];
 const maritalStatusOptions = ["Single", "Married", "Divorced", "Widowed"];
 const genderOptions = ["Male", "Female", "Other"];
 
-export const BasicTab = ({ register, errors, readOnly }: BasiTabProps) => {
+export const BasicTab = ({ register, errors, readOnly }: BasicTabProps) => {
   return (
     <section className="min-h-80">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4">

@@ -1,12 +1,13 @@
 "use client";
 
-import { Task3FormData } from "@/lib/validations";
+
+import { Task5FormData } from "@/lib/validations";
 import { FieldError, UseFormRegister } from "react-hook-form";
 
 interface ValidatedDropdownProps {
   label: string;
-  name: keyof Task3FormData;
-  register: UseFormRegister<Task3FormData>;
+  name: keyof Task5FormData;
+  register: UseFormRegister<Task5FormData>;
   error?: FieldError;
   options: string[];
   readOnly?: boolean;
