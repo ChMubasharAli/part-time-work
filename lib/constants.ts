@@ -1,32 +1,72 @@
-export type Task8FormMode = "create" | "edit" | "readonly";
+// ========== TASK-9 CONSTANTS ==========
+export type Task9Mode = "create" | "read";
 
-export const TASK8_FORM_MODES = {
-  CREATE: "create" as Task8FormMode,
-  EDIT: "edit" as Task8FormMode,
-  READONLY: "readonly" as Task8FormMode,
+export const TASK9_MODES = {
+  CREATE: "create" as Task9Mode,
+  READ: "read" as Task9Mode,
 };
 
-// Document types for dropdown
-export const DOCUMENT_TYPES = [
-  "Passport",
-  "ID Card",
-  "Driver License",
-  "Degree Certificate",
-  "Experience Certificate",
-  "Other",
+// Gender Options
+export const GENDER_OPTIONS = ["Male", "Female", "Other"];
+
+// Marital Status Options
+export const MARITAL_STATUS_OPTIONS = [
+  "Single",
+  "Married",
+  "Divorced",
+  "Widowed",
 ];
 
-// Subscription options
-export const SUBSCRIPTION_OPTIONS = [
-  { id: "basic", label: "Basic", description: "Free plan" },
-  { id: "premium", label: "Premium", description: "$9.99/month" },
-  { id: "enterprise", label: "Enterprise", description: "Custom pricing" },
+// Blood Group Options
+export const BLOOD_GROUP_OPTIONS = [
+  "A+",
+  "A-",
+  "B+",
+  "B-",
+  "AB+",
+  "AB-",
+  "O+",
+  "O-",
 ];
 
-// Communication options
-export const COMMUNICATION_OPTIONS = [
-  { id: "email", label: "Email", description: "Receive via email" },
-  { id: "sms", label: "SMS", description: "Receive via SMS" },
-  { id: "both", label: "Both", description: "Email and SMS" },
-  { id: "none", label: "None", description: "No updates" },
+// Visit Type Options
+export const VISIT_TYPE_OPTIONS = ["OPD", "Emergency", "Follow-up"];
+
+// Chronic Diseases Options
+export const CHRONIC_DISEASES = [
+  "Diabetes",
+  "Hypertension (High BP)",
+  "Asthma",
+  "Heart Disease",
+  "Arthritis",
+  "Cancer",
+  "Chronic Kidney Disease",
+  "COPD",
+  "HIV/AIDS",
+  "None",
+];
+
+// Past Surgeries Options
+export const PAST_SURGERIES = [
+  "Appendectomy",
+  "Cataract Surgery",
+  "C-section",
+  "Gallbladder Removal",
+  "Heart Bypass",
+  "Hysterectomy",
+  "Joint Replacement",
+  "None",
+];
+
+// Current Conditions Options
+export const CURRENT_CONDITIONS = [
+  "Fever",
+  "Cough",
+  "Headache",
+  "Fatigue",
+  "Nausea",
+  "Pain",
+  "Allergy",
+  "Infection",
+  "None",
 ];

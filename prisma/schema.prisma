@@ -7,46 +7,60 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Task8UserBasic {
-  id                 Int      @id @default(autoincrement())
-  firstName          String
-  lastName           String
-  email              String
-  status             String
-  maritalStatus      String
-  gender             String
-  estimatedStartDate DateTime
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+
+// Task-9 Models
+model Task9PatientPersonal {
+  id         Int      @id @default(autoincrement())
+  fullName   String
+  gender     String
+  dateOfBirth DateTime
+  age        Int
+  cnic       String   @unique
+  maritalStatus String
+  bloodGroup String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  // Relations
+  contact     Task9PatientContact?
+  medical     Task9PatientMedical?
+  visits      Task9PatientVisit[]
 }
 
-// Table 2: EndDate Tab Data
-model Task8UserEndDate {
-  id               Int      @id @default(autoincrement())
-  userId           Int      // Links to Task8UserBasic.id
-  country          String
-  address          String
-  city             String
-  estimatedEndDate DateTime
-  createdAt        DateTime @default(now())
+model Task9PatientContact {
+  id              Int      @id @default(autoincrement())
+  patientId       Int      @unique
+  phoneNumber     String
+  emergencyContact String
+  email          String
+  address        String
+  city           String
+  createdAt      DateTime @default(now())
+  
+  // Relations
+  patient        Task9PatientPersonal @relation(fields: [patientId], references: [id], onDelete: Cascade)
 }
 
-// Table 3: Additional Tab Data
-model Task8UserAdditional {
-  id               Int      @id @default(autoincrement())
-  userId           Int
-  
-  // Radio button fields
-  subscriptionType String   @default("basic")
-  communicationPref String  @default("email")
-  
-  // Range field
-  salaryRange      Int      @default(50000)
-  
-  // File fields (store URLs)
-  profilePicture   String?   // URL to uploaded file
-  supportingDocs   String[]  // Array of URLs
-  namedFiles       String?   // JSON string with document type and custom names
-  
+model Task9PatientMedical {
+  id                Int      @id @default(autoincrement())
+  patientId         Int      @unique
+  chronicDiseases   String[]
+  pastSurgeries     String[]
+  currentConditions String[]
   createdAt        DateTime @default(now())
+  
+  // Relations
+  patient          Task9PatientPersonal @relation(fields: [patientId], references: [id], onDelete: Cascade)
+}
+
+model Task9PatientVisit {
+  id          Int      @id @default(autoincrement())
+  patientId   Int
+  visitType   String   // OPD / Emergency / Follow-up
+  reason      String
+  assignedDoctor String
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  patient     Task9PatientPersonal @relation(fields: [patientId], references: [id], onDelete: Cascade)
 }
