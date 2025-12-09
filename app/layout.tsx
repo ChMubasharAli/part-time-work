@@ -1,6 +1,70 @@
+import Sidebar from "@/components/Sidebar";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+import { MenuItem } from "@/components/Sidebar/types";
+import Breadcrumb from "@/components/Breadcrumb";
+
+// Example menu data with IconName type
+const menuData: MenuItem[] = [
+  {
+    id: "dashboard",
+    name: "Dashboard",
+    href: "/",
+    icon: "HomeIcon", // Now uses IconName type
+  },
+  {
+    id: "projects",
+    name: "Projects",
+    icon: "FolderIcon",
+    children: [
+      {
+        id: "all-projects",
+        name: "All Projects",
+        href: "/projects/all-projects",
+        icon: "FolderIcon",
+      },
+      {
+        id: "new-project",
+        name: "New Project",
+        href: "/projects/new-projects",
+        icon: "FolderIcon",
+      },
+    ],
+  },
+  {
+    id: "team",
+    name: "Team",
+    href: "/team",
+    icon: "UsersIcon",
+  },
+  {
+    id: "reports",
+    name: "Reports",
+    icon: "ChartBarIcon",
+    children: [
+      {
+        id: "monthly",
+        name: "Monthly",
+        href: "/reports/monthly",
+        icon: "ChartBarIcon",
+      },
+      {
+        id: "quarterly",
+        name: "Quarterly",
+        href: "/reports/quarterly",
+        icon: "ChartBarIcon",
+      },
+    ],
+  },
+  {
+    id: "settings",
+    name: "Settings",
+    href: "/settings",
+    icon: "SettingsIcon",
+  },
+];
 
 export const metadata = {
   title: "Next.js",
@@ -15,8 +79,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body suppressHydrationWarning>
-        {children}
-        <ToastContainer />
+        <div className="flex min-h-screen  bg-gray-50 dark:bg-gray-900">
+          <Sidebar menu={menuData} />
+
+          <div>
+            <Breadcrumb />
+            {children}
+          </div>
+        </div>
       </body>
     </html>
   );
