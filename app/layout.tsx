@@ -1,6 +1,7 @@
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "@xyflow/react/dist/style.css";
 
 export const metadata = {
   title: "Next.js",

@@ -1,3 +1,71 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 248, 250, 252;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  overflow: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* React Flow custom styles */
+.react-flow__controls {
+  @apply !shadow-lg !border !border-gray-200 !bg-white !rounded-xl;
+}
+
+.react-flow__controls-button {
+  @apply !border-gray-200 !bg-white hover:!bg-gray-50 !rounded-lg;
+}
+
+.react-flow__controls-button svg {
+  @apply !fill-gray-700;
+}
+
+.react-flow__minimap {
+  @apply !bg-white !shadow-lg !border !border-gray-200 !rounded-xl;
+}
+
+.react-flow__node {
+  @apply !cursor-pointer;
+}
+
+.react-flow__edge-path {
+  @apply !stroke-gray-300 !stroke-2;
+}
+
+.react-flow__handle {
+  @apply !transition-all;
+}
+
+.react-flow__handle:hover {
+  @apply !scale-125;
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
