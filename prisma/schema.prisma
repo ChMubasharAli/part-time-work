@@ -7,21 +7,195 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// User model 
+
+
+model Task15PatientPersonal {
+  // Primary Key and Identity
+  id            BigInt   @id @default(autoincrement()) @map("id")
+  
+  // Patient Personal Details
+  full_name     String   @db.VarChar(200)
+  date_of_birth DateTime @db.Date
+  age           Int?
+  cnic          String   @unique @db.VarChar(50) // Unique Index
+  
+  // Relationships to Picklist (One-to-Many)
+  gender_id       BigInt
+  blood_group_id  BigInt
+  marital_status_id BigInt
+
+  // Audit Fields
+  created_at    DateTime @default(now()) @db.Timestamptz()
+  created_by_id BigInt
+  updated_at    DateTime? @updatedAt @db.Timestamptz()
+  updated_by_id BigInt?
+
+  // Relation Definitions
+  gender Picklist @relation("PatientPersonalGender", fields: [gender_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  bloodGroup Picklist @relation("PatientPersonalBloodGroup", fields: [blood_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  maritalStatus Picklist @relation("PatientPersonalMaritalStatus", fields: [marital_status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  createdBy User @relation("PatientPersonalCreatedBy", fields: [created_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updatedBy User? @relation("PatientPersonalUpdatedBy", fields: [updated_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Reverse Relationships (One-to-One / One-to-Many)
+  contact Task15PatientContact[]
+  medical Task15PatientMedical[]
+  visits  Task15PatientVisit[]
+
+  @@map("task15_patient_personal")
+}
+
+model Task15PatientContact {
+  // Primary Key and Identity
+  id            BigInt   @id @default(autoincrement()) @map("id")
+  
+  // Relationships
+  patient_id    BigInt   // Foreign Key to Task15PatientPersonal
+  city_id       BigInt   // Foreign Key to Picklist
+  country_id    BigInt   // Foreign Key to Picklist
+
+  // Contact Details
+  phone_number    String   @db.VarChar(200)
+  emergency_contact String   @db.VarChar(200)
+  email           String   @db.VarChar(50)
+  address         String   @db.VarChar(200)
+
+  // Audit Fields
+  created_at    DateTime @default(now()) @db.Timestamptz()
+  created_by_id BigInt
+  updated_at    DateTime? @updatedAt @db.Timestamptz()
+  updated_by_id BigInt?
+
+  // Relation Definitions
+  patient Task15PatientPersonal @relation(fields: [patient_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  city Picklist @relation("PatientContactCity", fields: [city_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  country Picklist @relation("PatientContactCountry", fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  createdBy User @relation("PatientContactCreatedBy", fields: [created_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updatedBy User? @relation("PatientContactUpdatedBy", fields: [updated_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([patient_id]) // Index as defined in SQL
+  @@map("task15_patient_contact")
+}
+
+model Task15PatientMedical {
+  // Primary Key and Identity
+  id            BigInt   @id @default(autoincrement()) @map("id")
+
+  // Relationships
+  patient_id    BigInt   // Foreign Key to Task15PatientPersonal
+
+  // Medical History (PostgreSQL JSONB array is represented as Json[] in Prisma)
+  // Note: You must enable the 'jsonProtocol' feature flag for Json[] support in Prisma versions below 5.16
+  chronic_diseases    Json[] @db.JsonB @default([])
+past_surgeries      Json[] @db.JsonB @default([])
+current_conditions  Json[] @db.JsonB @default([])
+
+  // Audit Fields
+  created_at    DateTime @default(now()) @db.Timestamptz()
+  created_by_id BigInt
+  updated_at    DateTime? @updatedAt @db.Timestamptz()
+  updated_by_id BigInt?
+
+  // Relation Definitions
+  patient Task15PatientPersonal @relation(fields: [patient_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdBy User @relation("PatientMedicalCreatedBy", fields: [created_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updatedBy User? @relation("PatientMedicalUpdatedBy", fields: [updated_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([patient_id])
+  @@map("task15_patient_medical")
+}
+
+model Task15PatientVisit {
+  // Primary Key and Identity
+  id            BigInt   @id @default(autoincrement()) @map("id")
+
+  // Relationships
+  patient_id    BigInt
+  assigned_doctor_id BigInt
+  visit_type_id BigInt
+  
+  // Visit Details
+  reason        String   @db.Text
+  
+  // Audit Fields
+  created_at    DateTime @default(now()) @db.Timestamptz()
+  created_by_id BigInt
+  updated_at    DateTime? @updatedAt @db.Timestamptz()
+  updated_by_id BigInt?
+
+  // Relation Definitions
+  patient Task15PatientPersonal @relation(fields: [patient_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assignedDoctor Picklist @relation("PatientVisitDoctor", fields: [assigned_doctor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  visitType Picklist @relation("PatientVisitType", fields: [visit_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  createdBy User @relation("PatientVisitCreatedBy", fields: [created_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updatedBy User? @relation("PatientVisitUpdatedBy", fields: [updated_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([patient_id])
+  @@map("task15_patient_visit")
+}
+
+
+
 model User {
-  id                 Int      @id @default(autoincrement())
-  firstName          String
-  lastName           String
-  email              String
-  status             String
-  maritalStatus      String
-  gender             String
-  estimatedStartDate DateTime
-  // NEW FIELDS FOR TASK-2
-  country            String
-  address            String
-  city               String
-  estimatedEndDate   DateTime
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  id        BigInt   @id @default(autoincrement()) @map("id")
+  user_name String   @db.VarChar(200)
+
+  // Reverse relationships for Audit fields
+  // Personal
+  createdTask15PatientPersonal Task15PatientPersonal[] @relation("PatientPersonalCreatedBy")
+  updatedTask15PatientPersonal Task15PatientPersonal[] @relation("PatientPersonalUpdatedBy")
+  // Contact
+  createdTask15PatientContact Task15PatientContact[] @relation("PatientContactCreatedBy")
+  updatedTask15PatientContact Task15PatientContact[] @relation("PatientContactUpdatedBy")
+  // Medical
+  createdTask15PatientMedical Task15PatientMedical[] @relation("PatientMedicalCreatedBy")
+  updatedTask15PatientMedical Task15PatientMedical[] @relation("PatientMedicalUpdatedBy")
+  // Visit
+  createdTask15PatientVisit Task15PatientVisit[] @relation("PatientVisitCreatedBy")
+  updatedTask15PatientVisit Task15PatientVisit[] @relation("PatientVisitUpdatedBy")
+
+  @@index([id])
+  @@map("users")
+}
+
+model PicklistCat {
+  id                 BigInt   @id @default(autoincrement()) @map("id")
+  pick_cat_name      String   @db.VarChar(200)
+  pick_cat_description String?  @db.VarChar(255) // Assuming varchar without length is max length
+  created_at         DateTime @db.Timestamptz()
+
+  // Reverse Relationship
+  picklist Picklist[]
+
+  @@map("picklist_cat")
+}
+
+model Picklist {
+  id                   BigInt   @id @default(autoincrement()) @map("id")
+  picklist_cat_id      BigInt
+  picklist_name        String?  @db.VarChar(50)
+  picklist_description String   @db.VarChar(200)
+  created_at           DateTime @db.Timestamptz()
+
+  // Relation Definitions
+  picklistCat PicklistCat @relation(fields: [picklist_cat_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // Reverse Relationships (Used in Task15PatientPersonal)
+  personalGender Task15PatientPersonal[] @relation("PatientPersonalGender")
+  personalBloodGroup Task15PatientPersonal[] @relation("PatientPersonalBloodGroup")
+  personalMaritalStatus Task15PatientPersonal[] @relation("PatientPersonalMaritalStatus")
+
+  // Reverse Relationships (Used in Task15PatientContact)
+  contactCity Task15PatientContact[] @relation("PatientContactCity")
+  contactCountry Task15PatientContact[] @relation("PatientContactCountry")
+
+  // Reverse Relationships (Used in Task15PatientVisit)
+  visitDoctor Task15PatientVisit[] @relation("PatientVisitDoctor")
+  visitType Task15PatientVisit[] @relation("PatientVisitType")
+
+  @@map("picklist")
 }
