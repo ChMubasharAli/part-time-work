@@ -10,6 +10,10 @@ export interface FormData {
   address: string;
   city: string;
   estimatedEndDate: string;
+
+  clientTimestamp?: string; // ISO string of client time
+  timezoneOffset?: number; // UTC offset in minutes
+  browserTimezone?: string;
 }
 
 export const crudOperations = {

@@ -34,24 +34,44 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Prepare data for database
+    const userData: any = {
+      firstName: body.firstName,
+      lastName: body.lastName,
+      email: body.email,
+      status: body.status,
+      maritalStatus: body.maritalStatus,
+      gender: body.gender,
+      estimatedStartDate: new Date(body.estimatedStartDate),
+      country: body.country,
+      city: body.city,
+      address: body.address,
+      estimatedEndDate: new Date(body.estimatedEndDate),
+
+      // ONLY THESE 3 client metadata fields
+      clientTimestamp: body.clientTimestamp
+        ? new Date(body.clientTimestamp)
+        : null,
+      timezoneOffset: body.timezoneOffset || null,
+      browserTimezone: body.browserTimezone || null,
+    };
+
+    // Create record
     const newRecord = await prisma.user.create({
-      data: {
-        firstName: body.firstName,
-        lastName: body.lastName,
-        email: body.email,
-        status: body.status,
-        maritalStatus: body.maritalStatus,
-        gender: body.gender,
-        estimatedStartDate: new Date(body.estimatedStartDate),
-        country: body.country,
-        city: body.city,
-        address: body.address,
-        estimatedEndDate: new Date(body.estimatedEndDate),
-      },
+      data: userData,
     });
 
     return NextResponse.json(
-      { message: "User record created successfully!", record: newRecord },
+      {
+        message: "User record created successfully!",
+        record: newRecord,
+        metadata: {
+          clientTime: body.clientTimestamp,
+          serverTime: new Date().toISOString(),
+          timezoneOffset: body.timezoneOffset,
+        },
+      },
       { status: 201 }
     );
   } catch (error: any) {

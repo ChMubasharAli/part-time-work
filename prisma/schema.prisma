@@ -21,6 +21,11 @@ model User {
   address            String
   city               String
   estimatedEndDate   DateTime
+
+  clientTimestamp    DateTime?  // User local time when Save pressed
+  timezoneOffset     Int?       // UTC offset in minutes
+  browserTimezone    String?    // e.g., "Asia/Karachi"
+
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 }

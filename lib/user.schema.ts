@@ -15,6 +15,11 @@ export const task3FormSchema = z.object({
   address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
   estimatedEndDate: z.string().min(1, "Estimated end date is required"),
+
+  // THESE 3 optional fields
+  clientTimestamp: z.string().optional(),
+  timezoneOffset: z.number().optional(),
+  browserTimezone: z.string().optional(),
 });
 
 export type Task3FormData = z.infer<typeof task3FormSchema>;
